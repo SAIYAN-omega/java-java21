@@ -1,5 +1,6 @@
 package java17.ex01;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
 import java17.data.Data;
@@ -7,6 +8,7 @@ import java17.data.Person;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 
 /**
@@ -40,7 +42,14 @@ public class Lambda_01_Test {
         List<Person> personList = Data.buildPersonList(100);
 
         // TODO result ne doit contenir que des personnes adultes (age >= 18)
-        List<Person> result = filter(personList, null);
+        PersonPredicate personPredicate = p -> {
+            if(p.getAge() >= 18)
+            {
+                return true;
+            }
+            return false;
+        };
+        List<Person> result = filter(personList,personPredicate);
 
         assert result.size() == 83;
 
@@ -57,7 +66,9 @@ public class Lambda_01_Test {
         List<Person> personList = Data.buildPersonList(100);
 
         // TODO result ne doit contenir que des personnes dont le prénom est "first_10"
-        List<Person> result = filter(personList, null);
+        PersonPredicate personPredicate = p -> p.getFirstname().equals("first_10");
+        List<Person> result = filter(personList, personPredicate);
+
 
         assert result.size() == 1;
         assert result.get(0).getFirstname().equals("first_10");
@@ -75,7 +86,15 @@ public class Lambda_01_Test {
 
         // TODO result ne doit contenir que les personnes dont l'age est > 49 et dont le hash du mot de passe correspond à la valeur de la variable passwordSha512Hex
         // TODO Pour obtenir le hash d'un mot, utiliser la méthode DigestUtils.sha512Hex(mot)
-        List<Person> result = filter(personList, null);
+        PersonPredicate personPredicate = p -> {
+            String MpHasher = DigestUtils.sha512Hex(p.getPassword());
+            if(p.getAge() > 49 && MpHasher.equals(passwordSha512Hex))
+            {
+                return true;
+            }
+            return false;
+        };
+        List<Person> result = filter(personList, personPredicate);
 
         assert result.size() == 6;
         for (Person person : result) {
